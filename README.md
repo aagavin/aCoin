@@ -1,0 +1,2 @@
+# aCoin
+A example blockchain 
