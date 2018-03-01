@@ -6,10 +6,10 @@ import ujson as json
 
 
 # Types
-Transaction = Dict[str, str, int]
+Transaction = Dict[str, str or int]
 Transactions = List[Transaction]
 
-Block = Dict[int, float, List[Transactions], int, str]
+Block = Dict[int, float or List[Transactions] or int or str]
 Chain = List[Block]
 
 

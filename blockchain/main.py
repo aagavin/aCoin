@@ -16,7 +16,7 @@ node_identifier = str(uuid4()).replace('-', '')
 
 @app.route('/')
 async def hello(request: Request) -> HTTPMethodView:
-    return json({'success': True, 'request': request.ip})
+    return json({'success': True, 'request': request.headers})
 
 
 @app.route('/mine', methods=['GET'])
