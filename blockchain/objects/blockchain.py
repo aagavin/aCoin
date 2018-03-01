@@ -4,6 +4,8 @@ from typing import List, Dict
 
 import ujson as json
 
+
+# Types
 Transaction = Dict[str, str, int]
 Transactions = List[Transaction]
 
@@ -70,6 +72,18 @@ class Blockchain(object):
         # We must make sure that the Dictionary is Ordered, or we'll have inconsistent hashes
         block_string = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(block_string).hexdigest()
+
+    def proof_of_work(self, last_proof):
+        """
+
+        :param last_proof: <int>
+        :return: <int>
+        """
+        proof = 0
+        while self.valid_proof(last_proof, proof) is False:
+            proof += 1
+
+        return proof
 
     @staticmethod
     def valid_proof(last_proof, proof) -> bool:
