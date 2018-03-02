@@ -1,7 +1,6 @@
 from uuid import uuid4
 
-from sanic import Sanic
-from sanic.response import json
+from sanic import Sanic, response
 from sanic.views import HTTPMethodView
 from sanic.request import Request
 
@@ -16,11 +15,11 @@ node_identifier = str(uuid4()).replace('-', '')
 
 @app.route('/')
 async def hello(request: Request) -> HTTPMethodView:
-    return json({'success': True, 'request': request.headers})
+    return request.json({'success': True, 'request': request.headers})
 
 
 @app.route('/mine', methods=['GET'])
-async def mine():
+async def mine(request: Request):
     """
     Mine a new block
     :return:
@@ -37,7 +36,7 @@ async def mine():
     previous_hash = blockchain.hash(last_block)
     block = blockchain.new_block(proof, previous_hash)
 
-    return json({
+    return response.json({
         'message': "New Block Forged",
         'index': block['index'],
         'transactions': block['transactions'],
@@ -52,24 +51,24 @@ async def new_transaction(request: Request):
     Add a new trasaction to the block
     :return:
     """
-    values: dict = request.json()
+    values: dict = request.json
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
     if not all(k in values for k in required):
-        return json({'error': 'Missing values'}), 400
+        return response.json({'error': 'Missing values'}, status=400)
 
     index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
 
-    return json({'message': f'Transaction will be added to Block {index}'}), 201
+    return response.json({'message': f'Transaction will be added to Block {index}'}, status=201)
 
 
 @app.route('/chain', methods=['GET'])
 async def chain(request: Request):
-    return {
+    return response.json({
         'chain': blockchain.chain,
         'length': len(blockchain.chain)
-    }
+    })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
